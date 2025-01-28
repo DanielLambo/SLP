@@ -1,4 +1,6 @@
+import pandas as pd
 import streamlit as st
+import plotly.express as px
 from dotenv import load_dotenv
 import os
 
@@ -40,10 +42,171 @@ Assumptions = '''based on the context of this paper , our general assumptions fo
 
 3. Learning Path Complexity: Learners with higher skill levels often engage in more complex and longer learning paths, indicating a preference for in-depth study and comprehensive understanding of the subject matter.
 '''
-st.write("")
+st.write(Assumptions)
+
+st.divider()
+st.header("Implementation")
+st.subheader(":red[Data Anaylsis]")
+st.write("We will begin with explaining the input data we are analyzing in this project.")
+data_explanation ='''
+"This study will utilize three distinct datasets to train and evaluate a personalized learning path recommendation system within a computer and software engineering institution. 
+
+1. :red[**Learner Dataset:**] This dataset will encompass information about each learner, including:
+    * `learner_id`: Unique identifier for each learner.
+    * `age`: Age of the learner.
+    * `learning_goal`: The specific learning objective of the learner (e.g., "Master Data Structures," "Prepare for a software engineering interview").
+    * `current_skill_level`: Quantified assessment of the learner's current proficiency in the relevant domain (e.g., beginner, intermediate, advanced).
+
+2. :red[**Learning Path Dataset:**] This dataset will describe historical learning paths undertaken by learners, including:
+    * `learner_id`: Linking the learning path to the corresponding learner.
+    * `sequence_of_learning`: An ordered list of learning resources (courses, articles, exercises) followed by the learner.
+    * `learning_outcome`: A numerical score (0-1) representing the learner's achieved proficiency level after completing the learning path.
+
+3. :red[**Knowledge Point Dataset:**] This dataset will characterize the knowledge points covered within each course, including:
+    * `knowledge_point_id`: Unique identifier for each knowledge point.
+    * `topic`: The specific subject area of the knowledge point (e.g., "Object-Oriented Programming," "Algorithms").
+    * `difficulty`: A measure of the complexity of the knowledge point (e.g., easy, medium, hard).
+
+These datasets will serve as crucial inputs for the machine learning model to accurately predict and recommend personalized learning paths tailored to individual learner needs and goals within the context of a computer and software engineering educational setting.
 
 
+By analyzing the GitHub data, we can generate a bar chart visualizing the relationship between learner courses and their current skill levels.
+'''
+st.write(data_explanation)
 
+learners = [
+    {'learner_id': 1, 'age': 25, 'learning_goal': 'Machine Learning', 'skill_level': 'Intermediate'},
+    {'learner_id': 2, 'age': 22, 'learning_goal': 'Data Science', 'skill_level': 'Beginner'},
+    {'learner_id': 3, 'age': 30, 'learning_goal': 'Deep Learning', 'skill_level': 'Advanced'},
+    {'learner_id': 4, 'age': 27, 'learning_goal': 'Artificial Intelligence', 'skill_level': 'Intermediate'},
+    {'learner_id': 5, 'age': 20, 'learning_goal': 'Data Science', 'skill_level': 'Beginner'},
+    {'learner_id': 6, 'age': 35, 'learning_goal': 'Deep Learning', 'skill_level': 'Advanced'},
+    {'learner_id': 7, 'age': 23, 'learning_goal': 'Python Programming', 'skill_level': 'Beginner'},
+    {'learner_id': 8, 'age': 28, 'learning_goal': 'Machine Learning', 'skill_level': 'Intermediate'},
+    {'learner_id': 9, 'age': 26, 'learning_goal': 'Statistics', 'skill_level': 'Beginner'},
+    {'learner_id': 10, 'age': 29, 'learning_goal': 'Artificial Intelligence', 'skill_level': 'Advanced'},
+    {'learner_id': 11, 'age': 21, 'learning_goal': 'Data Science', 'skill_level': 'Beginner'},
+    {'learner_id': 12, 'age': 32, 'learning_goal': 'Machine Learning', 'skill_level': 'Advanced'},
+    {'learner_id': 13, 'age': 24, 'learning_goal': 'Deep Learning', 'skill_level': 'Intermediate'},
+    {'learner_id': 14, 'age': 38, 'learning_goal': 'Artificial Intelligence', 'skill_level': 'Advanced'},
+    {'learner_id': 15, 'age': 19, 'learning_goal': 'Python Programming', 'skill_level': 'Beginner'},
+    {'learner_id': 16, 'age': 27, 'learning_goal': 'Statistics', 'skill_level': 'Intermediate'},
+    {'learner_id': 17, 'age': 31, 'learning_goal': 'Machine Learning', 'skill_level': 'Advanced'},
+    {'learner_id': 18, 'age': 25, 'learning_goal': 'Data Science', 'skill_level': 'Intermediate'},
+    {'learner_id': 19, 'age': 29, 'learning_goal': 'Deep Learning', 'skill_level': 'Beginner'},
+    {'learner_id': 20, 'age': 33, 'learning_goal': 'Artificial Intelligence', 'skill_level': 'Intermediate'},
+    {'learner_id': 21, 'age': 22, 'learning_goal': 'Python Programming', 'skill_level': 'Intermediate'},
+    {'learner_id': 22, 'age': 30, 'learning_goal': 'Statistics', 'skill_level': 'Advanced'},
+    {'learner_id': 23, 'age': 26, 'learning_goal': 'Machine Learning', 'skill_level': 'Beginner'},
+    {'learner_id': 24, 'age': 28, 'learning_goal': 'Data Science', 'skill_level': 'Advanced'},
+    {'learner_id': 25, 'age': 35, 'learning_goal': 'Deep Learning', 'skill_level': 'Intermediate'},
+    {'learner_id': 26, 'age': 21, 'learning_goal': 'Artificial Intelligence', 'skill_level': 'Beginner'},
+    {'learner_id': 27, 'age': 24, 'learning_goal': 'Python Programming', 'skill_level': 'Advanced'},
+    {'learner_id': 28, 'age': 32, 'learning_goal': 'Statistics', 'skill_level': 'Intermediate'},
+    {'learner_id': 29, 'age': 27, 'learning_goal': 'Machine Learning', 'skill_level': 'Beginner'},
+    {'learner_id': 30, 'age': 30, 'learning_goal': 'Data Science', 'skill_level': 'Intermediate'}
+]
+learning_paths = [
+    {'learner_id': 1, 'sequence': ['ML01', 'ML02', 'ML03'], 'learning_outcome': 0.8},
+    {'learner_id': 2, 'sequence': ['DS01', 'DS02'], 'learning_outcome': 0.6},
+    {'learner_id': 3, 'sequence': ['DL01', 'DL02'], 'learning_outcome': 0.9},
+    {'learner_id': 4, 'sequence': ['AI01', 'AI02', 'ML01'], 'learning_outcome': 0.75},
+    {'learner_id': 5, 'sequence': ['DS01', 'ST01'], 'learning_outcome': 0.5},
+    {'learner_id': 6, 'sequence': ['DL01', 'ML03', 'DL02'], 'learning_outcome': 0.95},
+    {'learner_id': 7, 'sequence': ['ST01', 'DS01'], 'learning_outcome': 0.4},
+    {'learner_id': 8, 'sequence': ['ML01', 'ML02'], 'learning_outcome': 0.7},
+    {'learner_id': 9, 'sequence': ['ST01', 'ML01'], 'learning_outcome': 0.65},
+    {'learner_id': 10, 'sequence': ['AI01', 'DL01'], 'learning_outcome': 0.85},
+    {'learner_id': 11, 'sequence': ['DS01', 'DS02', 'DS03'], 'learning_outcome': 0.7},
+    {'learner_id': 12, 'sequence': ['ML01', 'ML02', 'ML03', 'ML04'], 'learning_outcome': 0.85},
+    {'learner_id': 13, 'sequence': ['DL01', 'DL02', 'DL03'], 'learning_outcome': 0.92},
+    {'learner_id': 14, 'sequence': ['AI01', 'AI02', 'AI03'], 'learning_outcome': 0.88},
+    {'learner_id': 15, 'sequence': ['ST01', 'ST02', 'ST03'], 'learning_outcome': 0.6},
+    {'learner_id': 16, 'sequence': ['ML01', 'DS01', 'ML02'], 'learning_outcome': 0.78},
+    {'learner_id': 17, 'sequence': ['DL01', 'ML03', 'DL02'], 'learning_outcome': 0.9},
+    {'learner_id': 18, 'sequence': ['AI01', 'ML01', 'AI02'], 'learning_outcome': 0.82},
+    {'learner_id': 19, 'sequence': ['DS01', 'ST01', 'DS02'], 'learning_outcome': 0.65},
+    {'learner_id': 20, 'sequence': ['ML01', 'ML02', 'ML03', 'ML04'], 'learning_outcome': 0.9},
+    {'learner_id': 21, 'sequence': ['DL01', 'DL02', 'ML01'], 'learning_outcome': 0.88},
+    {'learner_id': 22, 'sequence': ['AI01', 'AI02', 'AI03', 'ML01'], 'learning_outcome': 0.95},
+    {'learner_id': 23, 'sequence': ['ST01', 'ST02', 'DS01'], 'learning_outcome': 0.55},
+    {'learner_id': 24, 'sequence': ['ML01', 'ML02', 'DS01'], 'learning_outcome': 0.72},
+    {'learner_id': 25, 'sequence': ['DL01', 'DL02', 'DL03'], 'learning_outcome': 0.98},
+    {'learner_id': 26, 'sequence': ['AI01', 'ML01', 'AI02'], 'learning_outcome': 0.8},
+    {'learner_id': 27, 'sequence': ['ST01', 'ST02', 'ST03'], 'learning_outcome': 0.7},
+    {'learner_id': 28, 'sequence': ['ML01', 'DS01', 'ML02'], 'learning_outcome': 0.85},
+    {'learner_id': 29, 'sequence': ['DL01', 'ML03', 'DL02'], 'learning_outcome': 0.92},
+    {'learner_id': 30, 'sequence': ['AI01', 'AI02', 'ML01'], 'learning_outcome': 0.78}
+]
+knowledge_points = [
+    {'kp_id': 'ML01', 'topic': 'Python Basics', 'difficulty': 'Easy'},
+    {'kp_id': 'ML02', 'topic': 'Linear Regression', 'difficulty': 'Intermediate'},
+    {'kp_id': 'ML03', 'topic': 'Neural Networks', 'difficulty': 'Advanced'},
+    {'kp_id': 'DS01', 'topic': 'Data Cleaning', 'difficulty': 'Easy'},
+    {'kp_id': 'DS02', 'topic': 'Exploratory Data Analysis', 'difficulty': 'Intermediate'},
+    {'kp_id': 'DL01', 'topic': 'Convolutional Neural Networks', 'difficulty': 'Advanced'},
+    {'kp_id': 'DL02', 'topic': 'Recurrent Neural Networks', 'difficulty': 'Advanced'},
+    {'kp_id': 'AI01', 'topic': 'Introduction to AI', 'difficulty': 'Easy'},
+    {'kp_id': 'AI02', 'topic': 'AI Ethics', 'difficulty': 'Intermediate'},
+    {'kp_id': 'ST01', 'topic': 'Probability Basics', 'difficulty': 'Easy'},
+    {'kp_id': 'ML04', 'topic': 'Logistic Regression', 'difficulty': 'Intermediate'},
+    {'kp_id': 'ML05', 'topic': 'Decision Trees', 'difficulty': 'Intermediate'},
+    {'kp_id': 'DS03', 'topic': 'Data Visualization', 'difficulty': 'Intermediate'},
+    {'kp_id': 'DS04', 'topic': 'Feature Engineering', 'difficulty': 'Advanced'},
+    {'kp_id': 'DL03', 'topic': 'Generative Adversarial Networks (GANs)', 'difficulty': 'Advanced'},
+    {'kp_id': 'DL04', 'topic': 'Transformer Networks', 'difficulty': 'Advanced'},
+    {'kp_id': 'AI03', 'topic': 'Natural Language Processing (NLP)', 'difficulty': 'Advanced'},
+    {'kp_id': 'AI04', 'topic': 'Computer Vision', 'difficulty': 'Advanced'},
+    {'kp_id': 'ST02', 'topic': 'Statistical Inference', 'difficulty': 'Intermediate'},
+    {'kp_id': 'ST03', 'topic': 'Hypothesis Testing', 'difficulty': 'Intermediate'},
+    {'kp_id': 'ML06', 'topic': 'Support Vector Machines (SVM)', 'difficulty': 'Advanced'},
+    {'kp_id': 'DS05', 'topic': 'Time Series Analysis', 'difficulty': 'Advanced'},
+    {'kp_id': 'DL05', 'topic': 'Reinforcement Learning', 'difficulty': 'Advanced'},
+    {'kp_id': 'AI05', 'topic': 'Robotics', 'difficulty': 'Advanced'},
+    {'kp_id': 'ST04', 'topic': 'Bayesian Statistics', 'difficulty': 'Advanced'},
+    {'kp_id': 'ML07', 'topic': 'Ensemble Methods', 'difficulty': 'Advanced'},
+    {'kp_id': 'DS06', 'topic': 'Big Data Analytics', 'difficulty': 'Advanced'},
+    {'kp_id': 'DL06', 'topic': 'Autoencoders', 'difficulty': 'Advanced'},
+    {'kp_id': 'AI06', 'topic': 'Explainable AI (XAI)', 'difficulty': 'Advanced'},
+    {'kp_id': 'ST05', 'topic': 'Non-parametric Statistics', 'difficulty': 'Advanced'}
+]
+
+learners_df = pd.DataFrame(learners)
+fig = px.bar(
+    learners_df,
+    x="learning_goal",
+    color="skill_level",
+    title="Learning Goals by Skill Level",
+    labels={"learning_goal": "Learning Goal", "count": "Number of Learners"}
+)
+st.plotly_chart(fig)
+
+
+st.write("Based on the second dataset, we can visualize the relationship between learners course path length(The number of total courses a learner takes in a sequence) and the learner's final outcome(the degree of how much the learner assimilated): ")
+
+learning_paths_df = pd.DataFrame(learning_paths)
+
+learning_paths_df['sequence_length'] = learning_paths_df['sequence'].apply(len)
+
+outcome_plot = px.scatter(
+    learning_paths_df,
+    x='sequence_length',
+    y='learning_outcome',
+    title='Learning Outcome vs. Sequence Length',
+    labels={'sequence_length': 'Number of Courses', 'learning_outcome': 'Learning Outcome'},
+   trendline='ols'  # Add a trendline to show correlation
+)
+knowledge_points_df = pd.DataFrame(knowledge_points)
+# Display the plot in Streamlit
+st.plotly_chart(outcome_plot)
+st.write("It is not a very interesting graph, but it shows the correlation!")
+st.write("\n")
+st.write("We also have a knowledge point dataset head that looks like this ")
+st.write(knowledge_points_df.head())
+
+st.divider()
+st.header(":blue[Data Preprocessing]")
+st.write("Now that we have analyzed all the data that will be utlized for this project, we will proceed to preprocess our existing data.")
 
 citation_one = '''Jayashri Bagade, Poonam Chaudhari, Poonam Girish Fegade, Ranjit M.
 Gawande, Prachi P. Vast, Dipika R. Birari (2024). Adaptive Learning Technologies for Personalized
@@ -53,13 +216,9 @@ Research Assistance in Libraries. Library Progress International, 44(1), 242-258
 EDUCAUSE, 11 Jan. 2017, 
 https://library.educause.edu/resources/2017/1/7-things-you-should-know-about-adaptive-learning. 
 '''
-st.divider(
-)
-st.write(Assumptions)
+st.divider()
 st.subheader("Works Cited:")
 st.caption(citation_one)
-
-
 
 
 
