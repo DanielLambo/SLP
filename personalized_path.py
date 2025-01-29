@@ -207,6 +207,20 @@ st.write(knowledge_points_df.head())
 st.divider()
 st.header(":blue[Data Preprocessing]")
 st.write("Now that we have analyzed all the data that will be utlized for this project, we will proceed to preprocess our existing data.")
+Preprocessing_phase = ''''While the datasets have been imported as pandas DataFrames, 
+a standard data cleaning process will be performed, including the removal of any rows or columns containing null or empty values.
+
+
+We will preprocess learner data to convert string data into numerical data  for example ("Machine Learning" -> 1)
+we use the goal_encoder.fit_transform(): method to learn the unique categories from the columns learning goals on learners data to numerical labels
+Most machine learning models (e.g., linear regression, decision trees) cannot process strings or categorical data directly.
+
+after this we will be merging all dataframes , into a variable,
+we would also encode knowledge points 
+The merged DataFrame (merged_df) will combine the data of learners (e.g., their attributes like age, learning_goal) with their learning paths.
+
+'''
+st.write(Preprocessing_phase)
 
 citation_one = '''Jayashri Bagade, Poonam Chaudhari, Poonam Girish Fegade, Ranjit M.
 Gawande, Prachi P. Vast, Dipika R. Birari (2024). Adaptive Learning Technologies for Personalized
@@ -219,43 +233,3 @@ https://library.educause.edu/resources/2017/1/7-things-you-should-know-about-ada
 st.divider()
 st.subheader("Works Cited:")
 st.caption(citation_one)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
