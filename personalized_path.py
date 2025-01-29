@@ -4,7 +4,7 @@ import plotly.express as px
 from dotenv import load_dotenv
 import os
 
-st.title("Personalized learning full-path recommendation model based on LSTM neural networks")
+st.title(":red[Personalized learning full-path recommendation model based on LSTM neural networks]")
 st.subheader("By: Daniel Lambo")
 st.subheader("Mentor: Dr Yujian Fu")
 st.divider()
@@ -207,20 +207,111 @@ st.write(knowledge_points_df.head())
 st.divider()
 st.header(":blue[Data Preprocessing]")
 st.write("Now that we have analyzed all the data that will be utlized for this project, we will proceed to preprocess our existing data.")
-Preprocessing_phase = ''''While the datasets have been imported as pandas DataFrames, 
-a standard data cleaning process will be performed, including the removal of any rows or columns containing null or empty values.
+Preprocessing_phase = '''
+Data cleaning is performed on the imported pandas DataFrames. Rows or columns containing null or empty values are removed to ensure data integrity. 
 
+Feature engineering is conducted. String-based features in the learner data (e.g., "Machine Learning") are converted into numerical representations for compatibility with most machine learning algorithms. The `goal_encoder.fit_transform()` method is employed to map unique categories within the 'learning_goals' column to numerical labels. Knowledge points are encoded using `LabelEncoder` to assign unique numerical identifiers to each distinct knowledge point.
 
-We will preprocess learner data to convert string data into numerical data  for example ("Machine Learning" -> 1)
-we use the goal_encoder.fit_transform(): method to learn the unique categories from the columns learning goals on learners data to numerical labels
-Most machine learning models (e.g., linear regression, decision trees) cannot process strings or categorical data directly.
+The learner, learning path, and knowledge point datasets are merged into a single DataFrame (`merged_df`) to establish comprehensive learner profiles. The `merged_df` integrates learner attributes (age, learning_goal, etc.) with their learning paths and the corresponding encoded knowledge points. 
 
-after this we will be merging all dataframes , into a variable,
-we would also encode knowledge points 
-The merged DataFrame (merged_df) will combine the data of learners (e.g., their attributes like age, learning_goal) with their learning paths.
+The merged data is transformed into sequences of learned knowledge points. Each sequence represents a partial learning path, and the corresponding output is the next expected knowledge point in the sequence. To accommodate deep learning models, sequences are padded to ensure uniform length.
+
+The dataset is divided into training and test sets for model evaluation. The data is then converted into TensorFlow Datasets and batched for efficient processing during the training phase. 
+
+A portion of the processed data is printed to visually inspect the sequences and labels, ensuring their accuracy and readiness for model training.
+
+This preprocessed data enables the model to learn patterns in learner behavior and predict the most suitable next step in their learning journey based on their prior learning history and individual characteristics.
 
 '''
 st.write(Preprocessing_phase)
+
+st.divider()
+st.header(":blue[Data Clustering]")
+
+clustering_text = '''
+Now that the data has been fully prepared and processed, the next step is clustering, which involves segmenting learners into meaningful groups based on similar learning characteristics. 
+The primary advantage of clustering is that it helps identify common learning patterns, allowing for the development of targeted learning strategies.  
+
+To achieve this, a clustering class will be created with key variables, including the learners' dataframe, learning paths, preprocessed data, clustering results, and feature columns. 
+The first method in this class will focus on preprocessing and feature engineering for clustering mixed data types.  
+
+We begin by identifying numerical features, such as age and learning outcomes, while categorical features include skill level, learning goals, learning style, and level. 
+A preprocessing pipeline will be implemented to handle missing values by replacing them with the string "missing." Additionally, one-hot encoding will be applied to convert categorical variables into binary columns, ensuring compatibility for clustering algorithms.
+ Finally, the processed data will be stored, and feature names will be prepared for further use.
+
+
+The precise clustering Algorithm we will be using is the **K-Means CLustering Algorithm**.
+This is an unsupervised machine learning algorithm used to group data into **K** distinct clusters.
+
+It works simply by initializing K centorids randomly, assigning each data point to the nearest centroid,
+recalculating centroids by computing means of all points in each cluster.
+and repeat. The algorithm aims to minimize intra-cluster variance, ensuring that data points within the same cluster are as similar as possible.
+, K-Means clustering is used to segment learners into groups based on their characteristics (e.g., age, skill level, learning goals). This helps:
+
+Identify distinct learner profiles, enabling personalized recommendations.
+Analyze learning patterns, improving curriculum design.
+Optimize targeted learning strategies, ensuring better engagement.
+Evaluates clustering quality using:
+Silhouette Score (measures how well points fit within clusters).
+Calinski-Harabasz Score (evaluates cluster dispersion).
+Stores the results, including cluster labels and centroids, for further analysis.
+The code snippet for the clustering algorithm is below
+'''
+
+st.write(clustering_text)
+
+
+clustering_code = '''
+    def perform_kmeans_clustering(self, n_clusters=3):
+        """
+        Perform K-Means clustering
+
+        Parameters:
+        - n_clusters: Number of clusters to form
+
+        Returns:
+        - Cluster labels and clustering metrics
+        """
+        if self.preprocessed_data is None:
+            self.preprocess_features()
+
+        kmeans = KMeans(
+            n_clusters=n_clusters,
+            random_state=42,
+            n_init=10
+        )
+
+        kmeans_labels = kmeans.fit_predict(self.preprocessed_data)
+
+        # Clustering evaluation metrics
+        silhouette = silhouette_score(
+            self.preprocessed_data,
+            kmeans_labels
+        )
+
+        calinski = calinski_harabasz_score(
+            self.preprocessed_data,
+            kmeans_labels
+        )
+
+        self.clustering_results['kmeans'] = {
+            'labels': kmeans_labels,
+            'silhouette_score': silhouette,
+            'calinski_score': calinski,
+            'centroids': kmeans.cluster_centers_
+        }
+
+        return kmeans_labels
+
+'''
+
+st.code(clustering_code,language = "python")
+more_stuff = '''
+    The cluser output would be visualized using Principle component analysis, the code for this can be seen in the GitHub, another method would be utilized to create cluster profiles, and one more to analyze cluster
+    characteristics
+
+
+'''
 
 citation_one = '''Jayashri Bagade, Poonam Chaudhari, Poonam Girish Fegade, Ranjit M.
 Gawande, Prachi P. Vast, Dipika R. Birari (2024). Adaptive Learning Technologies for Personalized
