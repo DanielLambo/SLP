@@ -310,8 +310,11 @@ more_stuff = '''
     The cluser output would be visualized using Principle component analysis, the code for this can be seen in the GitHub, another method would be utilized to create cluster profiles, and one more to analyze cluster
     characteristics
 
+    The math behind the k means clusering algorithm can be found here: https://en.wikipedia.org/wiki/K-means_clustering
 
 '''
+st.write(more_stuff)
+st.image("./clustering_image.png")
 
 citation_one = '''Jayashri Bagade, Poonam Chaudhari, Poonam Girish Fegade, Ranjit M.
 Gawande, Prachi P. Vast, Dipika R. Birari (2024). Adaptive Learning Technologies for Personalized
@@ -321,6 +324,7 @@ Research Assistance in Libraries. Library Progress International, 44(1), 242-258
 EDUCAUSE, 11 Jan. 2017, 
 https://library.educause.edu/resources/2017/1/7-things-you-should-know-about-adaptive-learning. 
 '''
+
 st.divider()
 st.subheader("Works Cited:")
 st.caption(citation_one)
